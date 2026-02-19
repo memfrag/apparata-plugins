@@ -1,0 +1,21 @@
+{
+  "name": "apparata-skills",
+  "owner": {
+    "name": "Martin Johannesson"
+  },
+  "metadata": {
+    "description": "Apparata agent skills",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "apparata-skills",
+      "description": "General skills",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/spotify"
+      ]
+    }
+  ]
+}
