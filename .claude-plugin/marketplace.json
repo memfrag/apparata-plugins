@@ -14,7 +14,8 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/spotify"
+        "./skills/spotify",
+        "./skills/noko"
       ]
     }
   ]
