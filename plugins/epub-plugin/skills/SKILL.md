@@ -2,7 +2,7 @@
 name: summarize-epub
 description: Summarize every chapter of an epub or ibooks book into a markdown file. Use when the user wants to summarize an epub, ibooks, or ebook.
 argument-hint: [path-to-epub-directory]
-allowed-tools: Bash(grep:*), Bash(head:*), Bash(plutil:*), Bash(ls:*), ReadFile
+allowed-tools: Bash(grep:*), Bash(head:*), Bash(plutil:*), Bash(ls:*), Read
 ---
 
 # Summarize EPUB Book
