@@ -2,7 +2,7 @@
 name: summarize-epub
 description: Summarize every chapter of an epub or ibooks book into a markdown file. Use when the user wants to summarize an epub, ibooks, or ebook.
 argument-hint: [path-to-epub-directory]
-allowed-tools: Bash(grep:*), Bash(head:*), Bash(plutil:*)
+allowed-tools: Bash(grep:*), Bash(head:*), Bash(plutil:*), Bash(ls:*), ReadFile
 ---
 
 # Summarize EPUB Book
@@ -98,7 +98,7 @@ For each chapter or section that contains substantive content:
 
 ## Step 5: Write the summary file
 
-Write the complete summary to a markdown file named `summary.md` inside the content directory (next to the xhtml files).
+IMPORTANT: Write the complete summary to a markdown file named `book-summary.md` in a directory of the user's choosing. Prompt for the path, but default to the current working directory.
 
 Format the file as follows:
 
