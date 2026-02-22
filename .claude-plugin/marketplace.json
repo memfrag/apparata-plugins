@@ -9,13 +9,14 @@
   },
   "plugins": [
     {
-      "name": "apparata-skills",
-      "description": "General skills",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/spotify"
-      ]
+      "name": "spotify-plugin",
+      "source": "./plugins/spotify-plugin",
+      "description": "Adds a /spotify skill for finding out what song is currently playing"
+    },
+    {
+      "name": "epub-plugin",
+      "source": "./plugins/epub-plugin",
+      "description": "Adds a /summarize-epub skill to summarize epub books"
     }
   ]
 }
