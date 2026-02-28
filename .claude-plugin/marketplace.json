@@ -5,9 +5,14 @@
   },
   "metadata": {
     "description": "Apparata agent skills",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
+    {
+      "name": "bootstrapp-plugin",
+      "source": "./plugins/bootstrapp-plugin",
+      "description": "Adds a /boostrapp skill for instantiating project templates"
+    },
     {
       "name": "spotify-plugin",
       "source": "./plugins/spotify-plugin",
