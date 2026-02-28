@@ -1,11 +1,11 @@
 {
-  "name": "apparata-skills",
+  "name": "apparata-plugins",
   "owner": {
     "name": "Martin Johannesson"
   },
   "metadata": {
-    "description": "Apparata agent skills",
-    "version": "1.1.0"
+    "description": "Apparata Claude plugins",
+    "version": "1.2.0"
   },
   "plugins": [
     {
