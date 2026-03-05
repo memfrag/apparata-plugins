@@ -14,6 +14,11 @@
       "description": "Adds a /boostrapp skill for instantiating project templates"
     },
     {
+      "name": "app-design-review-plugin",
+      "source": "./plugins/app-design-review-plugin",
+      "description": "Adds an /app-design-review skill for analyzing and critiquing UX/UI design of mobile app by screenshots."
+    },
+    {
       "name": "spotify-plugin",
       "source": "./plugins/spotify-plugin",
       "description": "Adds a /spotify skill for finding out what song is currently playing"
@@ -22,6 +27,6 @@
       "name": "epub-plugin",
       "source": "./plugins/epub-plugin",
       "description": "Adds a /summarize-epub skill to summarize epub books"
-    }
+    }    
   ]
 }
