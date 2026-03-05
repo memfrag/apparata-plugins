@@ -43,3 +43,28 @@ The analysis should both have an analysis of the app in general, but also a scre
 Generate a self-contained HTML page using the foreground design skill and organize all the information there. There should be a sidebar with the table of content. The design should be modern and support both light and dark mode, with a button to switch between the modes and defaults to the system mode. The button could be to the right of the table of content header.
 
 Offer to open the HTML file once you are done.
+
+## Screenshots Output                                                                         
+
+If the user provides a composite image containing multiple app screenshots side by side:   
+
+1. Ask the user to save the image file to the same directory as the HTML output (e.g.,     
+`screenshots.png`).                                                                        
+
+2. Use Python with Pillow to detect the exact pixel boundaries of each individual screen in
+the composite image. Sample brightness across multiple rows, find contiguous light regions
+wider than 100px, and compute the center x-coordinate of each region.                     
+
+3. In the HTML, display each screen's screenshot in its corresponding screen-by-screen     
+section using a single CSS-masked instance of the original image. Use a `<div>` with       
+`background-image`, `background-size: auto 100%`, and computed `background-position` values
+to show only the relevant phone. The container should be styled to resemble a phone frame 
+(rounded corners, shadow, fixed aspect ratio). If the screenshot is in portrait mode, it's ok
+to let text flow beside it, on the left side.
+
+4. Calculate the CSS `background-position` for each screen as follows:                     
+ - Scale factor = container height / image height                                        
+ - Scaled center = detected phone center × scale factor                                  
+ - Offset = (container width / 2) − scaled center                                        
+
+5. Do not crop or duplicate the image file. Use the single original image everywhere.      
