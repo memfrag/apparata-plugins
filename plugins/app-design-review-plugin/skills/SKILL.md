@@ -46,8 +46,9 @@ The analysis should both have an analysis of the app in general, but also a scre
 
 Generate a self-contained HTML page, except for the screenshots in the Screenshots directory, using the foreground design skill and organize all the information there. There should be a sidebar with the table of content. The design should be modern and support both light and dark mode, with a button to switch between the modes and defaults to the system mode. The button could be to the right of the table of content header.
 
-In the HTML, display each screen's screenshot in its corresponding screen-by-screen. Put the image in a "<div>" container. The container should be styled to resemble a phone frame 
-(rounded corners, shadow, fixed aspect ratio). If the image is larger than 800px in any direction, scale it down. If the screenshot is in portrait mode, it's ok to let text flow beside it, on the left side. 
+In the HTML, display each screen's screenshot in its corresponding screen-by-screen. The image should have a subtle drop shadow. If the image is larger than 800px in any direction, scale it down. If the screenshot is in portrait mode, it's ok to let text flow beside it, on the left side. 
+
+Make sure that any colors you use for typography have enough contrast against backgrounds where they are used.
 
 ## When the HTML file is done.
 
