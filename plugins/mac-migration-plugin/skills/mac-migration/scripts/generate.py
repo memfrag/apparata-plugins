@@ -1321,7 +1321,7 @@ def generate(output_path, user_name=None):
     js_content = js.read_text() if js.exists() else "// JS not found"
 
     # Title
-    title_name = user_name or run(["id", "-F"]) or "Developer"
+    title_name = user_name or run(["scutil", "--get", "ComputerName"]) or "My Mac"
 
     # Assemble HTML
     html = f"""<!DOCTYPE html>
@@ -1402,6 +1402,6 @@ if __name__ == "__main__":
     parser.add_argument("output", nargs="?", default="mac-migration.html",
                         help="Output HTML file path (default: mac-migration.html)")
     parser.add_argument("--name", "-n", default=None,
-                        help="Your name for the title (default: auto-detect)")
+                        help="Subtitle for the page (default: computer name)")
     args = parser.parse_args()
     generate(args.output, args.name)
