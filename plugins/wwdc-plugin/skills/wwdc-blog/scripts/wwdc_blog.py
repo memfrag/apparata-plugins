@@ -1416,7 +1416,7 @@ def generate_year_index(catalog: dict, event_id: str, output_base: str) -> str:
                 body.append(f'        </div><span class="badge available">Article</span>')
                 body.append(f'      </a><label class="read-check"><input type="checkbox" data-session="{event_id}/{num}"></label></li>')
             else:
-                prompt_text = f'/wwdc-blog for &quot;{stitle}&quot; from {event_name}'
+                prompt_text = f'/wwdc-plugin:wwdc-blog for &quot;{stitle}&quot; from {event_name}'
                 body.append(f'      <li class="session-item"><div class="session-item-inner">')
                 body.append(f'        {thumb_html}')
                 body.append(f'        <div class="session-info"><div class="session-title">{stitle}</div>')
