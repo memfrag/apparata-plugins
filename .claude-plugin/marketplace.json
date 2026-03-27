@@ -37,6 +37,11 @@
       "name": "mac-migration-plugin",
       "source": "./plugins/mac-migration-plugin",
       "description": "Generate a comprehensive Mac setup migration checklist as a self-contained interactive HTML file with app icons, progress tracking, and dark/light theme"
+    },
+    {
+      "name": "mac-build-notarize-plugin",
+      "source": "./plugins/mac-build-notarize-plugin",
+      "description": "Generate a complete build, sign, notarize, and release pipeline for macOS apps with Sparkle auto-update support via GitHub Releases"
     }
   ]
 }
