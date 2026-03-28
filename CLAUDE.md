@@ -54,4 +54,6 @@ Each skill is defined by a `SKILL.md` with YAML frontmatter (`name`, `descriptio
 
 1. Create `plugins/<name>-plugin/` with `skills/SKILL.md` (and `scripts/` if needed)
 2. Add an entry to `.claude-plugin/marketplace.json` in the `plugins` array
-3. Run `bash scripts/validate-marketplace.sh` to verify
+3. Bump the minor version in `marketplace.json` `metadata.version` (e.g., `2.1.0` → `2.2.0`)
+4. Add the plugin to `README.md` — both the summary table and a detail section, in alphabetical order
+5. Run `bash scripts/validate-marketplace.sh` to verify

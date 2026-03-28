@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Apparata Claude plugins",
-    "version": "2.0.0"
+    "version": "2.1.0"
   },
   "plugins": [
     {
@@ -42,6 +42,11 @@
       "name": "mac-build-notarize-plugin",
       "source": "./plugins/mac-build-notarize-plugin",
       "description": "Generate a complete build, sign, notarize, and release pipeline for macOS apps with Sparkle auto-update support via GitHub Releases"
+    },
+    {
+      "name": "refine-specification-plugin",
+      "source": "./plugins/refine-specification-plugin",
+      "description": "Refine a specification markdown file through an in-depth interview process"
     }
   ]
 }

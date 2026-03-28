@@ -22,6 +22,7 @@ Or install individual plugins by adding them to your Claude Code settings.
 | [EPUB Summarizer](#epub-summarizer) | Summarize every chapter of an EPUB or iBooks book into markdown |
 | [Mac Build & Notarize](#mac-build--notarize) | Generate a build, sign, notarize, and release pipeline for macOS apps |
 | [Mac Migration](#mac-migration) | Generate an interactive HTML checklist for migrating to a new Mac |
+| [Refine Specification](#refine-specification) | Refine a spec through an in-depth interview process |
 | [Spotify](#spotify) | Control Spotify playback and check what's currently playing on macOS |
 | [WWDC](#wwdc) | Browse, download, transcribe, and blog about Apple WWDC sessions |
 
@@ -74,6 +75,16 @@ Generate a comprehensive, interactive HTML checklist documenting the current Mac
 **Skill:** `/mac-migration` — Scan Dock layout, installed apps, shell config, SSH keys, git config, Homebrew packages, fonts, dev tools, and runtimes, then generate an interactive checklist with progress tracking
 
 **Prerequisites:** macOS, Python 3.10+, Xcode Command Line Tools
+
+---
+
+### Refine Specification
+
+Refine a specification markdown file through an in-depth interview process that uncovers gaps, ambiguities, and unstated assumptions.
+
+**Skill:** `/refine-spec <path-to-spec.md>` — Read a spec, conduct a detailed interview, then write the refined spec back to the same file
+
+**Prerequisites:** None
 
 ---
 
