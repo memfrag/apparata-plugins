@@ -63,8 +63,10 @@ The script should follow this flow:
 
 ### 4a. Setup and Sparkle tools download
 - `set -euo pipefail`
+- **IMPORTANT: The generated shell script must use ASCII characters only.** Do not use Unicode ellipsis (`...`), em-dashes, curly quotes, or other non-ASCII characters. Bash can interpret Unicode characters adjacent to `$VARIABLE` names as part of the variable name, causing "unbound variable" errors.
 - Define constants: `SCHEME`, `APP_NAME`, `KEYCHAIN_PROFILE="notary"`, `SPARKLE_VERSION="2.9.0"`
 - Set up paths: `SCRIPT_DIR`, `PROJECT_DIR`, `BUILD_DIR`, `SPARKLE_TOOLS_DIR`, `ARCHIVE_PATH`, `EXPORT_DIR`, `EXPORT_OPTIONS`
+- **`SPARKLE_TOOLS_DIR` must be `$PROJECT_DIR/Sparkle-tools`** (not inside `$BUILD_DIR`), because `build/` is cleaned at the start of each run and the tools should persist across builds.
 - Clean and create `build/` directory
 - Auto-download Sparkle tools if not present:
   ```bash
@@ -75,7 +77,7 @@ The script should follow this flow:
       rm "$BUILD_DIR/Sparkle.tar.xz"
   fi
   ```
-- Add `Sparkle-tools/` to `.gitignore`
+- Add `Sparkle-tools/` to the project root `.gitignore`
 
 ### 4b. Version checking (if enabled)
 - Read current version from project with `xcodebuild -showBuildSettings | grep MARKETING_VERSION`
@@ -85,8 +87,30 @@ The script should follow this flow:
 Both `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` must be updated because Sparkle uses `CFBundleVersion` (from `CURRENT_PROJECT_VERSION`) for version comparison. If `CURRENT_PROJECT_VERSION` stays at a fixed value like `1`, Sparkle cannot distinguish between releases.
 
 ### 4c. Archive and export
-- `xcodebuild archive` with `-arch arm64`, `ENABLE_HARDENED_RUNTIME=YES`
-- `xcodebuild -exportArchive` with ExportOptions.plist
+
+Archive with minimal flags — do not add extra build setting overrides:
+```bash
+xcodebuild archive \
+    -project "$PROJECT_DIR/$APP_NAME.xcodeproj" \
+    -scheme "$SCHEME" \
+    -archivePath "$ARCHIVE_PATH" \
+    -configuration Release \
+    -arch arm64 \
+    ENABLE_HARDENED_RUNTIME=YES \
+    | tail -1
+```
+
+Export with just the plist — no extra flags:
+```bash
+xcodebuild -exportArchive \
+    -archivePath "$ARCHIVE_PATH" \
+    -exportPath "$EXPORT_DIR" \
+    -exportOptionsPlist "$EXPORT_OPTIONS" \
+    | tail -1
+```
+
+- Do NOT add `SKIP_INSTALL`, `BUILD_LIBRARY_FOR_DISTRIBUTION`, or `-allowProvisioningUpdates` — these can interfere with SPM dependency signing and cause export failures.
+- Do NOT pass `CODE_SIGN_IDENTITY` as an xcodebuild override — it applies to all targets including SPM dependencies, which may not have a development team set, causing "Signing requires a development team" errors. The signing identity should be configured in the Xcode project's build settings instead.
 - Extract version from exported app's Info.plist
 
 ### 4d. Create DMG (not ZIP!)
@@ -261,8 +285,11 @@ After generating all files, instruct the user to:
 
 ## Important gotchas
 
+- **ASCII only in shell scripts**: Never use Unicode characters (ellipsis `...`, em-dashes, curly quotes) in generated shell scripts. Bash can parse them as part of variable names.
 - **DMG not ZIP**: Always distribute as DMG. Finder resolves symlinks in ZIPs, breaking Sparkle's framework seal.
 - **Both versions must match**: `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` must both be updated for each release.
+- **No extra xcodebuild overrides**: Do not pass `SKIP_INSTALL`, `BUILD_LIBRARY_FOR_DISTRIBUTION`, `CODE_SIGN_IDENTITY`, or `-allowProvisioningUpdates` to xcodebuild. These can break SPM dependency signing or cause export failures. Keep archive/export commands minimal — signing should be configured in the Xcode project.
+- **Sparkle tools outside build/**: `SPARKLE_TOOLS_DIR` must be in the project root (`$PROJECT_DIR/Sparkle-tools`), not inside `build/`, since `build/` is cleaned on each run.
 - **No Run Script build phase needed**: SPM handles Sparkle framework embedding. Do not strip or copy XPC services manually.
 - **Sparkle MIT license**: Remind the user to add Sparkle (MIT, 2006-2017, Andy Matuschak et al.) to their app's attributions/LICENSE file.
 
