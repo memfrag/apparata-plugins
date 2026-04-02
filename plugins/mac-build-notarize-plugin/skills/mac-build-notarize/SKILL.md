@@ -80,11 +80,18 @@ The script should follow this flow:
 - Add `Sparkle-tools/` to the project root `.gitignore`
 
 ### 4b. Version checking (if enabled)
-- Read current version from project with `xcodebuild -showBuildSettings | grep MARKETING_VERSION`
+- Read current version: try `xcodebuild -showBuildSettings | grep MARKETING_VERSION` first. If not found (some projects don't use `MARKETING_VERSION`), fall back to reading `CFBundleShortVersionString` from Info.plist via `PlistBuddy`. The grep pipeline must not fail silently under `set -euo pipefail` — use `|| true` to handle the empty-result case.
 - Check against latest GitHub release with `gh release view --repo <owner/repo> --json tagName -q '.tagName'`
-- If not newer: prompt for new version, validate it's newer, update both `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.pbxproj` via `sed`, commit and push
+- If not newer: prompt for new version, validate it's newer, then update versions and commit/push.
 
-Both `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` must be updated because Sparkle uses `CFBundleVersion` (from `CURRENT_PROJECT_VERSION`) for version comparison. If `CURRENT_PROJECT_VERSION` stays at a fixed value like `1`, Sparkle cannot distinguish between releases.
+**Version update must always include Info.plist.** `generate_appcast` reads `CFBundleVersion` and `CFBundleShortVersionString` from the built app's Info.plist, not from `project.pbxproj` build settings. If the project uses `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` in `project.pbxproj`, update those via `sed` as well. But always also update `CFBundleShortVersionString` and `CFBundleVersion` in Info.plist via `PlistBuddy`:
+
+```bash
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" "$INFO_PLIST"
+```
+
+Both `CFBundleVersion` and `CFBundleShortVersionString` must be set to the same version string. Sparkle uses `CFBundleVersion` (`sparkle:version`) for update comparison logic and `CFBundleShortVersionString` (`sparkle:shortVersionString`) for display. If they diverge (e.g., `CFBundleVersion` stays at `1` while the marketing version advances), `generate_appcast` will emit the wrong `sparkle:version` and Sparkle's update comparison will break.
 
 ### 4c. Archive and export
 
@@ -97,7 +104,7 @@ xcodebuild archive \
     -configuration Release \
     -arch arm64 \
     ENABLE_HARDENED_RUNTIME=YES \
-    | tail -1
+    2>&1 | tee "$BUILD_DIR/archive.log" | tail -5
 ```
 
 Export with just the plist — no extra flags:
@@ -106,8 +113,10 @@ xcodebuild -exportArchive \
     -archivePath "$ARCHIVE_PATH" \
     -exportPath "$EXPORT_DIR" \
     -exportOptionsPlist "$EXPORT_OPTIONS" \
-    | tail -1
+    2>&1 | tee "$BUILD_DIR/export.log" | tail -5
 ```
+
+**Do NOT use bare `| tail -1`** on xcodebuild commands. Under `set -euo pipefail`, if xcodebuild fails, `tail` still succeeds and the error is silently swallowed. Use `| tee "$BUILD_DIR/<step>.log" | tail -5` to capture full output to a log file while showing progress. After each step, verify the expected output exists (e.g., check the archive directory or exported `.app` exists) and print the last 30 lines of the log on failure.
 
 - Do NOT add `SKIP_INSTALL`, `BUILD_LIBRARY_FOR_DISTRIBUTION`, or `-allowProvisioningUpdates` — these can interfere with SPM dependency signing and cause export failures.
 - Do NOT pass `CODE_SIGN_IDENTITY` as an xcodebuild override — it applies to all targets including SPM dependencies, which may not have a development team set, causing "Signing requires a development team" errors. The signing identity should be configured in the Xcode project's build settings instead.
@@ -287,7 +296,8 @@ After generating all files, instruct the user to:
 
 - **ASCII only in shell scripts**: Never use Unicode characters (ellipsis `...`, em-dashes, curly quotes) in generated shell scripts. Bash can parse them as part of variable names.
 - **DMG not ZIP**: Always distribute as DMG. Finder resolves symlinks in ZIPs, breaking Sparkle's framework seal.
-- **Both versions must match**: `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` must both be updated for each release.
+- **All three version sources must match**: `MARKETING_VERSION`, `CURRENT_PROJECT_VERSION` (in `project.pbxproj`), and `CFBundleShortVersionString`/`CFBundleVersion` (in `Info.plist`) must all be updated for each release. Always update Info.plist via `PlistBuddy` — this is what ends up in the built app and what `generate_appcast` reads.
+- **Never swallow errors silently**: Include an `error()` helper function that prints to stderr and exits. Use `|| error "description"` on every critical command. Verify expected outputs exist after archive/export steps.
 - **No extra xcodebuild overrides**: Do not pass `SKIP_INSTALL`, `BUILD_LIBRARY_FOR_DISTRIBUTION`, `CODE_SIGN_IDENTITY`, or `-allowProvisioningUpdates` to xcodebuild. These can break SPM dependency signing or cause export failures. Keep archive/export commands minimal — signing should be configured in the Xcode project.
 - **Sparkle tools outside build/**: `SPARKLE_TOOLS_DIR` must be in the project root (`$PROJECT_DIR/Sparkle-tools`), not inside `build/`, since `build/` is cleaned on each run.
 - **No Run Script build phase needed**: SPM handles Sparkle framework embedding. Do not strip or copy XPC services manually.
