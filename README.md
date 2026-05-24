@@ -23,6 +23,7 @@ Or install individual plugins by adding them to your Claude Code settings.
 | [Mac Build & Notarize](#mac-build--notarize) | Generate a build, sign, notarize, and release pipeline for macOS apps |
 | [Mac Migration](#mac-migration) | Generate an interactive HTML checklist for migrating to a new Mac |
 | [Refine Specification](#refine-specification) | Refine a spec through an in-depth interview process |
+| [Session Handoff](#session-handoff) | Capture session state to a HANDOFF doc so work resumes cleanly, even on another machine |
 | [Spotify](#spotify) | Control Spotify playback and check what's currently playing on macOS |
 | [WWDC](#wwdc) | Browse, download, transcribe, and blog about Apple WWDC sessions |
 
@@ -83,6 +84,16 @@ Generate a comprehensive, interactive HTML checklist documenting the current Mac
 Refine a specification markdown file through an in-depth interview process that uncovers gaps, ambiguities, and unstated assumptions.
 
 **Skill:** `/refine-spec <path-to-spec.md>` — Read a spec, conduct a detailed interview, then write the refined spec back to the same file
+
+**Prerequisites:** None
+
+---
+
+### Session Handoff
+
+Capture the state of a work session in a `HANDOFF-<slug>.md` document so it can be resumed later — by a fresh session, possibly on a different machine with none of the original conversation's context.
+
+**Skill:** `/session-handoff [output-path-or-slug]` — Reconstruct goal, progress, next steps, key files, decisions, open questions, and how to run; inspect git state and offer to commit/push (with confirmation); write a self-contained, machine-portable handoff doc
 
 **Prerequisites:** None
 

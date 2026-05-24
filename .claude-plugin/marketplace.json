@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Apparata Claude plugins",
-    "version": "2.2.0"
+    "version": "2.3.0"
   },
   "plugins": [
     {
@@ -47,6 +47,11 @@
       "name": "refine-specification-plugin",
       "source": "./plugins/refine-specification-plugin",
       "description": "Refine a specification markdown file through an in-depth interview process"
+    },
+    {
+      "name": "session-handoff-plugin",
+      "source": "./plugins/session-handoff-plugin",
+      "description": "Generate a HANDOFF-<slug>.md capturing session state — goal, progress, next steps, decisions, and how to run — so work can be resumed later, including on a different machine"
     }
   ]
 }
