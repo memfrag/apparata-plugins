@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Apparata Claude plugins",
-    "version": "2.3.0"
+    "version": "2.4.0"
   },
   "plugins": [
     {
@@ -52,6 +52,11 @@
       "name": "session-handoff-plugin",
       "source": "./plugins/session-handoff-plugin",
       "description": "Generate a HANDOFF-<slug>.md capturing session state — goal, progress, next steps, decisions, and how to run — so work can be resumed later, including on a different machine"
+    },
+    {
+      "name": "skill-to-plugin-plugin",
+      "source": "./plugins/skill-to-plugin-plugin",
+      "description": "Package an existing local skill as a plugin in this marketplace — create the plugin dir, adapt frontmatter, register it, bump the version, update README, validate, and ship a merged PR"
     }
   ]
 }

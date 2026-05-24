@@ -24,6 +24,7 @@ Or install individual plugins by adding them to your Claude Code settings.
 | [Mac Migration](#mac-migration) | Generate an interactive HTML checklist for migrating to a new Mac |
 | [Refine Specification](#refine-specification) | Refine a spec through an in-depth interview process |
 | [Session Handoff](#session-handoff) | Capture session state to a HANDOFF doc so work resumes cleanly, even on another machine |
+| [Skill to Plugin](#skill-to-plugin) | Package a local skill as a plugin in this marketplace and ship it via a merged PR |
 | [Spotify](#spotify) | Control Spotify playback and check what's currently playing on macOS |
 | [WWDC](#wwdc) | Browse, download, transcribe, and blog about Apple WWDC sessions |
 
@@ -96,6 +97,16 @@ Capture the state of a work session in a `HANDOFF-<slug>.md` document so it can 
 **Skill:** `/session-handoff [output-path-or-slug]` — Reconstruct goal, progress, next steps, key files, decisions, open questions, and how to run; inspect git state and offer to commit/push (with confirmation); write a self-contained, machine-portable handoff doc
 
 **Prerequisites:** None
+
+---
+
+### Skill to Plugin
+
+Package an existing local skill (a `SKILL.md`, optionally with `scripts/`, `references/`, or `assets/`) as a plugin in this marketplace, following the repo's own "Adding a New Plugin" process end to end.
+
+**Skill:** `/skill-to-plugin [path-to-skill]` — Create the plugin directory, adapt the frontmatter (add `user-invocable`, infer `allowed-tools`, `argument-hint`), register it in `marketplace.json`, bump the version, update `README.md`, run the validator, then branch, commit, push, open a PR, and merge
+
+**Prerequisites:** `gh` CLI authenticated for push/PR/merge
 
 ---
 
