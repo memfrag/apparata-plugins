@@ -17,7 +17,20 @@ import urllib.request
 CDN_URL_PREFIX = b"https://devimages-cdn.apple.com/wwdc-services/"
 
 DEFAULT_DEVELOPER_APP_PATH = "/Applications/Developer.app"
-WWDCCORE_RELATIVE_PATH = "Contents/Frameworks/WWDCCore.framework/Versions/A/WWDCCore"
+
+# The embedded CDN catalog URL has lived in different binaries across versions of
+# Developer.app. Newer versions ship it in the main executable; older versions
+# kept it in the WWDCCore framework. We try these known locations first as a fast
+# path, then fall back to recursively scanning every file under Contents/.
+CANDIDATE_RELATIVE_PATHS = [
+    "Contents/MacOS/Developer",
+    "Contents/Frameworks/WWDCCore.framework/Versions/A/WWDCCore",
+    "Contents/PlugIns/Developer Widget.appex/Contents/MacOS/Developer Widget",
+]
+
+# Skip files larger than this when doing the recursive fallback scan, to avoid
+# reading huge resources (videos, archives) that won't contain the URL string.
+MAX_SCAN_FILE_SIZE = 200 * 1024 * 1024  # 200 MB
 
 
 def extract_base_url(data: bytes) -> str:
@@ -42,17 +55,53 @@ def extract_contents_url(data: bytes) -> str:
     return base + "contents.json"
 
 
+def _contains_cdn_url(path: str) -> bool:
+    """Return True if the file at path contains the CDN URL prefix."""
+    try:
+        with open(path, "rb") as f:
+            return CDN_URL_PREFIX in f.read()
+    except (OSError, IOError):
+        return False
+
+
 def read_wwdccore_binary(app_path: str = DEFAULT_DEVELOPER_APP_PATH) -> bytes:
-    """Read the WWDCCore binary from Developer.app."""
+    """Find and read the Developer.app binary that embeds the CDN catalog URL.
+
+    Tries known binary locations first (fast path), then falls back to a
+    recursive scan of every file under Contents/, since Apple has moved the
+    embedded URL between binaries across versions of the app.
+    """
     if not os.path.basename(app_path) == "Developer.app":
         raise ValueError(f"Not a Developer.app path: {app_path}")
 
-    binary_path = os.path.join(app_path, WWDCCORE_RELATIVE_PATH)
-    if not os.path.exists(binary_path):
-        raise FileNotFoundError(f"WWDCCore binary not found at: {binary_path}")
+    if not os.path.isdir(app_path):
+        raise FileNotFoundError(f"Developer.app not found at: {app_path}")
 
-    with open(binary_path, "rb") as f:
-        return f.read()
+    # Fast path: known locations that have held the URL in past versions.
+    for rel in CANDIDATE_RELATIVE_PATHS:
+        candidate = os.path.join(app_path, rel)
+        if os.path.isfile(candidate) and _contains_cdn_url(candidate):
+            with open(candidate, "rb") as f:
+                return f.read()
+
+    # Fallback: recursively scan every file under Contents/ for the URL.
+    contents_dir = os.path.join(app_path, "Contents")
+    for root, _dirs, files in os.walk(contents_dir):
+        for name in files:
+            path = os.path.join(root, name)
+            try:
+                if os.path.getsize(path) > MAX_SCAN_FILE_SIZE:
+                    continue
+            except OSError:
+                continue
+            if _contains_cdn_url(path):
+                with open(path, "rb") as f:
+                    return f.read()
+
+    raise FileNotFoundError(
+        f"Could not find any binary containing the CDN URL "
+        f"({CDN_URL_PREFIX.decode('ascii')}) under: {app_path}"
+    )
 
 
 def fetch_url(url: str) -> bytes:

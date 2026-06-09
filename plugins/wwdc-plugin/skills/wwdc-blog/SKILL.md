@@ -19,10 +19,10 @@ Generate a blog-post HTML page for a WWDC session by combining video, transcript
 ## Usage
 
 ```bash
-python3 ~/.claude/skills/wwdc-blog/scripts/wwdc_blog.py "wwdc2025/230"
+python3 ~/.claude/skills/wwdc-blog/scripts/wwdc_blog.py "wwdc2026/230"
 python3 ~/.claude/skills/wwdc-blog/scripts/wwdc_blog.py "AlarmKit" -o /tmp/wwdcvids
-python3 ~/.claude/skills/wwdc-blog/scripts/wwdc_blog.py "wwdc2025/230" --threshold 0.25 --settle 1.0
-python3 ~/.claude/skills/wwdc-blog/scripts/wwdc_blog.py "wwdc2025/230" --no-filter
+python3 ~/.claude/skills/wwdc-blog/scripts/wwdc_blog.py "wwdc2026/230" --threshold 0.25 --settle 1.0
+python3 ~/.claude/skills/wwdc-blog/scripts/wwdc_blog.py "wwdc2026/230" --no-filter
 ```
 
 ### Options
@@ -57,5 +57,5 @@ output-dir/<eventId>-<sessionNum>/
 
 ```python
 from wwdc_blog import create_blog
-html_path = create_blog("wwdc2025/230", output_dir="/tmp/wwdcvids")
+html_path = create_blog("wwdc2026/230", output_dir="/tmp/wwdcvids")
 ```

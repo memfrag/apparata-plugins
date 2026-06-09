@@ -1,6 +1,6 @@
 ---
 name: wwdc-catalog
-description: Fetch the WWDC session catalog from Apple's CDN by extracting the catalog URL from the Developer.app's WWDCCore binary. Use this skill whenever the user asks about WWDC sessions, WWDC videos, WWDC catalog, Apple developer conference content, or wants to browse, search, list, or look up any WWDC session or talk — even if they just say something like "what sessions are there about SwiftUI" or "find me that WWDC video about concurrency". Also use this when the user wants to download or work with WWDC session metadata.
+description: Fetch the WWDC session catalog from Apple's CDN by extracting the catalog URL embedded in one of the Developer.app's binaries. Use this skill whenever the user asks about WWDC sessions, WWDC videos, WWDC catalog, Apple developer conference content, or wants to browse, search, list, or look up any WWDC session or talk — even if they just say something like "what sessions are there about SwiftUI" or "find me that WWDC video about concurrency". Also use this when the user wants to download or work with WWDC session metadata.
 ---
 
 # WWDC Catalog
@@ -9,7 +9,7 @@ This skill fetches the full WWDC session catalog from Apple's CDN. The catalog i
 
 ## How it works
 
-The Apple Developer app (`/Applications/Developer.app`) ships with a framework called `WWDCCore` that contains an embedded CDN URL pointing to the session catalog. The bundled script reads this binary, finds the URL by searching for the `https://devimages-cdn.apple.com/wwdc-services/` prefix, and appends `contents.json` to fetch the full catalog.
+The Apple Developer app (`/Applications/Developer.app`) embeds a CDN URL pointing to the session catalog inside one of its binaries. The exact binary has changed across versions of the app — historically it lived in a `WWDCCore` framework, while current versions ship it in the main executable (`Contents/MacOS/Developer`). The bundled script tries the known locations first, then falls back to recursively scanning every file under `Contents/`, finding the URL by searching for the `https://devimages-cdn.apple.com/wwdc-services/` prefix, and appends `contents.json` to fetch the full catalog.
 
 The catalog is normalized after fetching: older WWDCs (<=2019) used `"Session"` as the content type while newer ones use `"Video"` — the script rewrites all `"Session"` types to `"Video"` so you can always filter on `type == "Video"` regardless of year.
 
