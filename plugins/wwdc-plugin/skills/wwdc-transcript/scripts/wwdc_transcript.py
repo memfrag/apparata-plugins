@@ -8,11 +8,20 @@ and returns a JSON array of {time, text} entries.
 
 import gzip
 import json
+import os
 import re
 import ssl
 import sys
 import urllib.error
 import urllib.request
+
+# Developer.app caches per-session transcripts as JSON here. Each file is named
+# "<event>-<session>.json" (e.g. "wwdc2026-269.json") and contains:
+#   {"<event>-<session>": {"language": "eng",
+#                          "transcript": [[start_seconds, "text "], ...]}}
+TRANSCRIPT_CACHE_DIR = os.path.expanduser(
+    "~/Library/Group Containers/group.developer.apple.wwdc/Library/Caches/Transcripts/ByID"
+)
 
 
 def fetch_url(url: str) -> bytes:
@@ -112,16 +121,86 @@ def extract_chapters(html_text: str) -> list[dict]:
     return chapters
 
 
+def cache_key_from_url(url: str) -> str | None:
+    """Derive the Developer.app transcript cache key ("<event>-<session>") from a
+    session URL like https://developer.apple.com/videos/play/wwdc2026/269/."""
+    m = re.search(r"/videos/play/([^/]+)/([^/?#]+)", url)
+    if not m:
+        return None
+    return f"{m.group(1)}-{m.group(2)}"
+
+
+def _group_cache_entries(transcript: list) -> list[dict]:
+    """Turn Developer.app cache rows ([start_seconds, text]) into transcript
+    entries with paragraph flags. The cache has no paragraph markers, so break
+    paragraphs after sentence-ending punctuation once enough words accumulate."""
+    entries = []
+    words_in_para = 0
+    for i, row in enumerate(transcript):
+        if not isinstance(row, (list, tuple)) or len(row) < 2:
+            continue
+        time_val = float(row[0])
+        text = str(row[1]).strip()
+        if not text:
+            continue
+        is_para = not entries
+        if entries and words_in_para >= 45:
+            prev = entries[-1]["text"].rstrip()
+            if prev and prev[-1] in ".!?…":
+                is_para = True
+        if is_para:
+            words_in_para = 0
+        words_in_para += len(text.split())
+        entries.append({"time": time_val, "text": text, "paragraph": is_para})
+    if entries:
+        entries[0]["paragraph"] = True
+    return entries
+
+
+def extract_transcript_from_cache(url: str) -> list[dict]:
+    """Load a transcript from Developer.app's local JSON cache, if present.
+
+    Returns [] when the cache directory, file, or session entry is missing so
+    callers can fall back to scraping the web page.
+    """
+    key = cache_key_from_url(url)
+    if not key:
+        return []
+    path = os.path.join(TRANSCRIPT_CACHE_DIR, f"{key}.json")
+    if not os.path.exists(path):
+        return []
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return []
+    # File is keyed by the session id; tolerate the entry being the sole value.
+    inner = data.get(key)
+    if inner is None and len(data) == 1:
+        inner = next(iter(data.values()))
+    if not isinstance(inner, dict):
+        return []
+    return _group_cache_entries(inner.get("transcript", []))
+
+
 def get_transcript(url: str) -> list[dict]:
-    """Fetch a WWDC session page and extract its transcript."""
+    """Return a session transcript, preferring Developer.app's local cache and
+    falling back to scraping the session web page."""
+    entries = extract_transcript_from_cache(url)
+    if entries:
+        return entries
     html = fetch_url(url).decode("utf-8")
     return extract_transcript(html)
 
 
 def get_transcript_and_chapters(url: str) -> tuple[list[dict], list[dict]]:
-    """Fetch a WWDC session page and extract transcript + chapter markers."""
+    """Fetch a WWDC session's transcript + chapter markers. The transcript comes
+    from Developer.app's local cache when available; chapters come from the page."""
     html = fetch_url(url).decode("utf-8")
-    return extract_transcript(html), extract_chapters(html)
+    entries = extract_transcript_from_cache(url)
+    if not entries:
+        entries = extract_transcript(html)
+    return entries, extract_chapters(html)
 
 
 def format_timestamp(seconds: float) -> str:
