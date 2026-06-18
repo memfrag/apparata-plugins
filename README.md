@@ -20,6 +20,7 @@ Or install individual plugins by adding them to your Claude Code settings.
 | [App Design Review](#app-design-review) | Analyze and review mobile app screenshots from a UX/UI design perspective |
 | [Bootstrapp](#bootstrapp) | Instantiate projects from template bundles with parameter substitution |
 | [EPUB Summarizer](#epub-summarizer) | Summarize every chapter of an EPUB or iBooks book into markdown |
+| [Mac Apps](#mac-apps) | Generate a searchable HTML inventory of every app installed on a Mac |
 | [Mac Build & Notarize](#mac-build--notarize) | Generate a build, sign, notarize, and release pipeline for macOS apps |
 | [Mac Migration](#mac-migration) | Generate an interactive HTML checklist for migrating to a new Mac |
 | [Refine Specification](#refine-specification) | Refine a spec through an in-depth interview process |
@@ -57,6 +58,16 @@ Summarize every chapter of an EPUB or iBooks book into a markdown file.
 **Skill:** `/summarize-epub` — Generate chapter-by-chapter summaries from EPUB and iBooks files, with Apple Books library browsing
 
 **Prerequisites:** Path to an EPUB file or access to the Apple Books library
+
+---
+
+### Mac Apps
+
+Generate a modern, searchable HTML inventory of every application installed on your Mac.
+
+**Skill:** `/mac-apps [output-path]` — Scan `/Applications`, `~/Applications`, `/System/Applications`, and the system Utilities folder; extract each app's icon; and produce a dark/light page with per-app version, size, bundle ID, category filter chips, live search, and descriptions
+
+**Prerequisites:** macOS, Python 3.10+, Xcode Command Line Tools (for icon extraction)
 
 ---
 

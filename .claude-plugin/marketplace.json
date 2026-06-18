@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Apparata Claude plugins",
-    "version": "2.4.2"
+    "version": "2.5.0"
   },
   "plugins": [
     {
@@ -57,6 +57,11 @@
       "name": "skill-to-plugin-plugin",
       "source": "./plugins/skill-to-plugin-plugin",
       "description": "Package an existing local skill as a plugin in this marketplace — create the plugin dir, adapt frontmatter, register it, bump the version, update README, validate, and ship a merged PR"
+    },
+    {
+      "name": "mac-apps-plugin",
+      "source": "./plugins/mac-apps-plugin",
+      "description": "Generate a modern, searchable HTML inventory of every app installed on a Mac — with icons, versions, sizes, bundle IDs, categories, and descriptions"
     }
   ]
 }
