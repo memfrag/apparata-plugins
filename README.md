@@ -27,6 +27,7 @@ Or install individual plugins by adding them to your Claude Code settings.
 | [Session Handoff](#session-handoff) | Capture session state to a HANDOFF doc so work resumes cleanly, even on another machine |
 | [Skill to Plugin](#skill-to-plugin) | Package a local skill as a plugin in this marketplace and ship it via a merged PR |
 | [Spotify](#spotify) | Control Spotify playback and check what's currently playing on macOS |
+| [SwiftUI Review](#swiftui-review) | Review SwiftUI code against the patterns and anti-patterns in *The SwiftUI Way* |
 | [WWDC](#wwdc) | Browse, download, transcribe, and blog about Apple WWDC sessions |
 
 ---
@@ -128,6 +129,18 @@ Control Spotify playback and check what's currently playing on macOS.
 **Skill:** `/spotify` — Check current track, play/pause, skip, and stop via AppleScript
 
 **Prerequisites:** macOS with Spotify desktop app installed
+
+---
+
+### SwiftUI Review
+
+Review SwiftUI code for adherence to the patterns and anti-patterns in *The SwiftUI Way* by Natalia Panferova.
+
+**Agent:** `swiftui-reviewer` — Read-only review agent carrying the full rubric: view composition, dependency scoping, observation and model lifetime, structural identity, update-cycle cost, data loading and concurrency, list performance, animation scoping, and platform conventions and accessibility
+
+**Skill:** `/swiftui-review [path]` — Resolve the review target (a path, the current git diff, or SwiftUI files under the working directory), dispatch the agent, and relay findings ordered by severity with `file:line` references and specific fixes
+
+**Prerequisites:** None
 
 ---
 

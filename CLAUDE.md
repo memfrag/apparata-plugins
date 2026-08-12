@@ -18,7 +18,7 @@ Run this after adding or modifying plugins. It checks that `marketplace.json` is
 
 ### Plugin Structure
 
-Every plugin lives under `plugins/<name>-plugin/` (the `-plugin` suffix is a convention). Two patterns exist:
+Every plugin lives under `plugins/<name>-plugin/` (the `-plugin` suffix is a convention). Three patterns exist:
 
 **Single-skill plugin** (e.g., `spotify-plugin`):
 ```
@@ -41,6 +41,20 @@ plugins/<name>-plugin/
         ├── SKILL.md
         └── scripts/
 ```
+
+**Agent-backed plugin** (e.g., `swiftui-review-plugin`) — an `agents/` directory alongside `skills/`, where the skill resolves the target and dispatches the agent, and the agent holds the domain knowledge:
+```
+plugins/<name>-plugin/
+├── README.md
+├── agents/
+│   └── <agent>.md
+└── skills/
+    └── SKILL.md
+```
+
+### Agent definitions
+
+An agent is a markdown file in `agents/` with YAML frontmatter (`name`, `description`, `tools`, `model`) followed by its system prompt. The `description` is what Claude matches on when selecting an agent automatically, so it should name both the task and the symptoms that should trigger it. Keep the domain rubric in the agent, not duplicated in the skill that dispatches it.
 
 ### SKILL.md
 

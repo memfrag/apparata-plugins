@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Apparata Claude plugins",
-    "version": "2.5.0"
+    "version": "2.6.0"
   },
   "plugins": [
     {
@@ -62,6 +62,11 @@
       "name": "mac-apps-plugin",
       "source": "./plugins/mac-apps-plugin",
       "description": "Generate a modern, searchable HTML inventory of every app installed on a Mac — with icons, versions, sizes, bundle IDs, categories, and descriptions"
+    },
+    {
+      "name": "swiftui-review-plugin",
+      "source": "./plugins/swiftui-review-plugin",
+      "description": "Review SwiftUI code against the patterns and anti-patterns in \"The SwiftUI Way\" — composition, dependency scoping, observation, structural identity, update cost, list performance, animation, and accessibility"
     }
   ]
 }
