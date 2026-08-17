@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Apparata Claude plugins",
-    "version": "2.6.0"
+    "version": "2.7.0"
   },
   "plugins": [
     {
@@ -67,6 +67,11 @@
       "name": "swiftui-review-plugin",
       "source": "./plugins/swiftui-review-plugin",
       "description": "Review SwiftUI code against the patterns and anti-patterns in \"The SwiftUI Way\" — composition, dependency scoping, observation, structural identity, update cost, list performance, animation, and accessibility"
+    },
+    {
+      "name": "ai-writing-review-plugin",
+      "source": "./plugins/ai-writing-review-plugin",
+      "description": "Review prose for \"AI-isms\" — em dash monotony, excess vocabulary, the \"not just X, it's Y\" reversal, trailing participles, uncited authority, metronomic rhythm, and paragraphs that read fluently but say nothing"
     }
   ]
 }

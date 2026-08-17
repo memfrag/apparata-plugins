@@ -17,6 +17,7 @@ Or install individual plugins by adding them to your Claude Code settings.
 
 | Plugin | Description |
 |---|---|
+| [AI Writing Review](#ai-writing-review) | Review prose for "AI-isms" — the vocabulary, cadence, and structure that betray LLM authorship |
 | [App Design Review](#app-design-review) | Analyze and review mobile app screenshots from a UX/UI design perspective |
 | [Bootstrapp](#bootstrapp) | Instantiate projects from template bundles with parameter substitution |
 | [EPUB Summarizer](#epub-summarizer) | Summarize every chapter of an EPUB or iBooks book into markdown |
@@ -29,6 +30,20 @@ Or install individual plugins by adding them to your Claude Code settings.
 | [Spotify](#spotify) | Control Spotify playback and check what's currently playing on macOS |
 | [SwiftUI Review](#swiftui-review) | Review SwiftUI code against the patterns and anti-patterns in *The SwiftUI Way* |
 | [WWDC](#wwdc) | Browse, download, transcribe, and blog about Apple WWDC sessions |
+
+---
+
+### AI Writing Review
+
+Review prose for "AI-isms" — em dash monotony, excess vocabulary ("delve", "tapestry", "underscores"), the "it's not just X, it's Y" reversal, trailing participial summaries, uncited authority, metronomic sentence rhythm, and paragraphs that read fluently but carry no retrievable information.
+
+A Python detector counts the 19 things that can be counted — burstiness, em dash rate, excess-word density, transition stacking — and the agent spends its judgment on what a script cannot evaluate: whether a sentence carries information at all. Findings are ranked by convergence, since no single tell convicts and em dashes alone are the notorious false positive.
+
+**Agent:** `ai-ism-reviewer` — read-only review agent with no write tools
+
+**Skill:** `/ai-writing-review [file]` — Resolve the target, dispatch the agent, relay the report
+
+**Prerequisites:** Python 3 (standard library only)
 
 ---
 
