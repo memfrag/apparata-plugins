@@ -152,6 +152,15 @@ devices. In a speech, an op-ed, or persuasive marketing copy they are craft, not
 slop. Flag them when they appear on autopilot in expository prose — every third
 list padded to three items — not when they're clearly doing work.
 
+The tricolon check only counts triplets whose head words are stacked adjectives
+or abstract nouns ("faster, cheaper, and more reliable"; "isolation,
+communication, and management"). It already excludes proper-noun enumerations
+("Keizersgracht, Herengracht, and Singel"), triplets inside list items, and
+lists of concrete things ("trees, bikes, and boats"), because those are
+enumerations by construction. The count in the report notes how many it excluded.
+If you are reviewing a shot list, recipe, or feature table and still see hits,
+check whether the items are genuinely adjectival before reporting them.
+
 ### B4. Formal academic register
 
 Academic writing legitimately shares surface features with LLM output: hedging,

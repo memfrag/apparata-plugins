@@ -30,7 +30,7 @@ The detector runs 19 checks. Every hit carries a line number.
 | **Excess vocabulary** | ~90 words and phrases, per 500 words | > 3 |
 | **Verb inflation** | leverage/utilize/facilitate, per 300 words | > 1 |
 | **Negative parallelism** | "it's not just X, it's Y" family | ≥ 3 |
-| **Autopilot tricolon** | three single-word items of similar length | > 1 per 200 words |
+| **Autopilot tricolon** | stacked adjectives or abstract nouns; proper-noun enumerations and list items excluded | > 1 per 200 words |
 | **Trailing participle** | "…, underscoring the broader shift." | ≥ 2 |
 | **Copula avoidance** | "serves as" / "boasts" where "is"/"has" would do | ≥ 3 |
 | **Throat-clearing** | "in today's fast-paced world" | ≥ 2 per 500 words |

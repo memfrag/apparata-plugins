@@ -721,30 +721,98 @@ def check_puffery(doc, stats):
                    "showing it.", hits)
 
 
+# An item may carry a comparative intensifier ("more reliable"); capture the
+# head word, which is what decides whether the triplet is rhetorical.
+_TRI_ITEM = r"(?:(?:more|less|most|least|very|highly|far)\s+)?([A-Za-z][\w-]{2,16})"
+
 TRICOLON_RE = re.compile(
-    r"\b([A-Za-z][\w-]{2,14})\s*,\s+([A-Za-z][\w-]{2,14})\s*,\s+"
-    r"(?:and|or)\s+([A-Za-z][\w-]{2,14})\b"
+    r"\b" + _TRI_ITEM + r"\s*,\s+" + _TRI_ITEM + r"\s*,\s+"
+    r"(?:and|or)\s+" + _TRI_ITEM + r"\b"
 )
+
+# Suffixes that mark an adjective or an abstract noun. The autopilot tricolon
+# stacks these; an enumeration of concrete things ("bikes, trees, and boats")
+# does not.
+_RHETORICAL_SUFFIXES = (
+    # adjectival
+    "ive", "ous", "ful", "able", "ible", "ic", "al", "ing", "ed", "less",
+    "ary", "ish", "ent", "ant", "ile", "ory", "er", "est",
+    # abstract nominal
+    "tion", "sion", "ment", "ity", "ness", "ance", "ence", "ism", "ship",
+    "hood", "cy", "logy",
+)
+
+# Short adjectives with no distinguishing suffix.
+_PLAIN_ADJECTIVES = {
+    "big", "small", "fast", "slow", "new", "old", "good", "bad", "cheap",
+    "quick", "clean", "clear", "safe", "strong", "simple", "smart", "bold",
+    "rich", "deep", "warm", "cool", "dry", "soft", "hard", "light", "dark",
+    "free", "full", "thin", "wide", "long", "short", "high", "low", "sharp",
+    "smooth", "solid", "sound", "true", "real", "fair", "keen", "lean",
+}
+
+# If one of these lands in an item slot the regex mis-parsed the phrase.
+_TRI_STOPWORDS = {
+    "the", "and", "or", "but", "for", "nor", "yet", "its", "his", "her",
+    "their", "our", "your", "this", "that", "these", "those", "some", "many",
+    "most", "much", "other", "such", "any", "all", "both", "each", "more",
+    "one", "two", "with", "from", "into", "onto", "than", "then", "was",
+    "were", "are", "has", "had", "have", "not", "who", "whose", "which",
+}
+
+
+def _is_rhetorical_item(word):
+    w = word.lower()
+    if w in _PLAIN_ADJECTIVES:
+        return True
+    return any(w.endswith(s) and len(w) > len(s) + 1
+               for s in _RHETORICAL_SUFFIXES)
 
 
 def check_tricolon(doc, stats):
+    list_item_lines = {doc.line_of(m.start())
+                       for m in re.finditer(r"^\s*(?:[-*+]|\d+[.)])\s+",
+                                            doc.raw, re.M)}
     hits = []
+    skipped = 0
     for m in TRICOLON_RE.finditer(doc.prose):
         parts = [m.group(1), m.group(2), m.group(3)]
-        # Single-word items of similar length read as autopilot; a list of
-        # concrete nouns of varying length usually does not.
-        lens = [len(p) for p in parts]
-        if statistics.pstdev(lens) <= 3.5:
-            hits.append(hit(doc, m.start(), m.group(0),
-                            {"items": parts}))
+
+        # A mis-parse: a function word landed in an item slot.
+        if any(p.lower() in _TRI_STOPWORDS for p in parts):
+            continue
+
+        # Proper-noun enumeration ("Keizersgracht, Herengracht, and Singel").
+        # Slots 2 and 3 are always mid-sentence, so a capital there is a name.
+        if parts[1][0].isupper() or parts[2][0].isupper():
+            skipped += 1
+            continue
+
+        # Shot lists, ingredient lists, and feature bullets are enumerations
+        # by construction, not rhetoric.
+        if doc.line_of(m.start()) in list_item_lines:
+            skipped += 1
+            continue
+
+        # The tell is stacked adjectives or abstract nouns, not a list of
+        # concrete things. Require a majority of the heads to look rhetorical.
+        if sum(_is_rhetorical_item(p) for p in parts) < 2:
+            skipped += 1
+            continue
+
+        hits.append(hit(doc, m.start(), m.group(0), {"items": parts}))
+
     rate = 200.0 * len(hits) / max(stats["words"], 1)
     sev = band(rate, 1, 2)
+    note = ("Three-item lists where the third adds nothing, stacking "
+            "adjectives or abstract nouns. Enumerations of concrete things, "
+            "proper nouns, and list items are excluded. Deliberate tricolon "
+            "in persuasive writing is legitimate - read each one.")
+    if skipped:
+        note += f" ({skipped} enumeration(s) excluded.)"
     return Finding("tricolon", "Rule of three on autopilot", sev,
                    f"{rate:.1f} per 200 words ({len(hits)} total)",
-                   "<=1 per 200 words",
-                   "Three-item lists where the third item adds nothing. "
-                   "Deliberate tricolon in persuasive writing is legitimate - "
-                   "read each one.", hits)
+                   "<=1 per 200 words", note, hits)
 
 
 # --- markdown structure (raw view) ----------------------------------------
