@@ -66,6 +66,15 @@ Read `<scripts-dir>/REFERENCE.md` in full, then apply section A to the text:
   from it. Report which paragraphs fail.
 - Significance inflation, the "Challenges and Future Prospects" reflex, puffery
   register, elegant variation, symmetry of coverage, ungrounded specificity.
+- **Abstraction shuffling (A9)** — the subject stays fixed while the predicate
+  cycles through abstractions ("a cornerstone… an investment… a mindset… a
+  practice"). List the predicates and ask what claim changes between them. If
+  none does, it is one assertion repeated, and it is usually the mechanism
+  behind a paragraph that fails the restatement test.
+- **Ungrounded specificity runs both ways (A8).** Invented precision is the
+  common case, but vague quantities inside an otherwise precise text are the
+  stronger signal — a register discontinuity within one document beats any
+  absolute rate.
 
 These are the findings that matter most. The metrics support them; they do not
 replace them.

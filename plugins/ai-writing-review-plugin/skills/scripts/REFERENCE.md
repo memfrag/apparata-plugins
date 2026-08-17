@@ -105,6 +105,41 @@ Numbers, percentages, and dates that appear precise but are sourced to nothing �
 invented to sound concrete. Cross-reference with the script's `vague_authority`
 hits.
 
+**It also runs backwards, and that version is more diagnostic.** Watch for vague
+quantities in a text that is otherwise precise: "significantly more defects" in
+an essay that elsewhere supplies 19 hours, 640 lines, 8% and 61%. An author with
+that measurement habit does not reach for "significantly more" when reaching for
+evidence. The vagueness is out of character for its surroundings, and a register
+discontinuity inside one document is stronger evidence than any absolute rate.
+
+### A9. Abstraction shuffling
+
+The subject term stays fixed, but the predicate cycles through several
+abstractions for the same claim:
+
+> Code review is **a cornerstone of engineering excellence**… **a meaningful
+> investment in the long-term health of the codebase**… not merely **a process**
+> — it's **a mindset**… **a collaborative practice** rather than **a
+> bureaucratic checkpoint**.
+
+Six different nouns; not one is a different claim. Each restates "review is
+good" in a new costume.
+
+**The test:** list the predicates applied to the subject, then ask what changes
+between them. If you cannot name a claim that one makes and the next does not,
+they are one assertion repeated, and all but the best are deletable.
+
+**Distinguish it from two neighbours.** In *elegant variation* (A6) the
+**subject** term is what varies, and that is a repetition-penalty artifact. Here
+the subject is repeated faithfully — often a sign of a technical writer — while
+the predicate does the shuffling. And *significance inflation* (A3) asserts
+importance once; this asserts it repeatedly, each time in different clothes.
+A passage frequently shows both.
+
+**Why it matters:** it is the mechanism behind a paragraph that fails A2. The
+text feels substantive because each sentence introduces a new noun, and the
+reader mistakes new vocabulary for new information.
+
 ---
 
 ## B. Calibration — what NOT to flag
@@ -214,6 +249,7 @@ authorship.
 | Autopilot tricolon | "faster, cheaper, and more reliable" | "faster and cheaper" *(if the third adds nothing)* |
 | Puffery | "a world-class, state-of-the-art facility" | "a 40,000 m² plant built in 2023" |
 | Significance inflation | "This played a key role in the industry's evolution." | "Three competitors copied the format within a year." |
+| Abstraction shuffling | "It is a cornerstone, an investment, a culture — a mindset rather than a process." | *(pick the one true claim and cut the rest)* |
 | Low burstiness | Six consecutive 18-word sentences. | Break one to four words. Let another run long, with subordinate clauses that earn their length. |
 | Title Case heading | "## Getting Started With Installation" | "## Installation" |
 | Bold overuse | "The **fast**, **flexible**, **modern** library." | "The library is fast and flexible." |

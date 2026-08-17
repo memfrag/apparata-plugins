@@ -92,6 +92,12 @@ INFLATED_VERBS = {
 NEGATIVE_PARALLELISM = [
     r"\b(?:it|this|that|there)'?s not (?:just|only|merely|simply)\b",
     r"\b(?:is|are|was|were)n'?t (?:just|only|merely|simply)\b",
+    # Uncontracted copula. Formal registers avoid contractions, so without
+    # this the construction goes undetected in exactly the writing the tool
+    # is most often pointed at: "code review is not merely a process".
+    r"\b(?:is|are|was|were|am|be|been|being)\s+not\s+"
+    r"(?:just|only|merely|simply)\b",
+    r"\b(?:do|does|did)\s+not\s+(?:just|only|merely|simply)\b",
     r"\bnot (?:just|only|merely|simply)\s+\w[\w\s,'-]{0,60}?\s+but\b",
     r"\bmore than (?:just|simply)\b",
     r"\bnot\s+\w[\w\s'-]{0,40}?,\s*but\s+\w",
@@ -411,13 +417,25 @@ def hit(doc, offset, text, extra=None):
 
 
 def scan_regexes(doc, patterns, flags=re.I):
-    hits = []
+    """Scan every pattern, keeping the longest match at any given position.
+
+    Patterns in the same family overlap by design, so one construction can
+    match two of them. Counting it twice would inflate the rate and, worse,
+    make a single phrase look like a repeated tic.
+    """
+    best = {}
     for pat in patterns:
         for m in re.finditer(pat, doc.prose, flags):
-            if not m.group(0).strip():
+            text = m.group(0)
+            if not text.strip():
                 continue
-            hits.append(hit(doc, m.start(), m.group(0), {"pattern": pat}))
-    hits.sort(key=lambda h: h["offset"])
+            prev = best.get(m.start())
+            if prev is None or len(text) > len(prev.group(0)):
+                best[m.start()] = m
+    hits = []
+    for start in sorted(best):
+        m = best[start]
+        hits.append(hit(doc, start, m.group(0), {"pattern": m.re.pattern}))
     return hits
 
 
