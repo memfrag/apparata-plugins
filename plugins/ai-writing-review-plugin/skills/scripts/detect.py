@@ -581,6 +581,9 @@ def check_vague_authority(doc, stats):
     hits = []
     for h in raw_hits:
         window = doc.prose[h["offset"]:h["offset"] + 220]
+        # Stop at the paragraph break. A number in the *next* paragraph belongs
+        # to a different claim and must not redeem this one.
+        window = re.split(r"\n\s*\n", window)[0]
         # A nearby citation, year, figure, or proper name redeems the claim.
         cited = bool(re.search(r"\d{4}|\d+\s?%|\[\d|\(\w+,?\s*\d{4}\)|"
                                r"et al\.|https?://|doi", window, re.I))
@@ -982,6 +985,16 @@ def build_stats(doc):
     }
 
 
+# Weak signals per REFERENCE section D. They may appear in a report, but they
+# must never be one of the patterns that makes a paragraph a convergence hit.
+WEAK_FOR_CONVERGENCE = {
+    "em_dash_density",
+    "unicode_artifacts",
+    "vocabulary_range",
+    "markdown_structure",
+}
+
+
 def build_clusters(doc, findings, stats):
     """Group hits by paragraph; report paragraphs with 3+ distinct patterns."""
     paras = stats["paragraphs"]
@@ -999,7 +1012,13 @@ def build_clusters(doc, findings, stats):
 
     buckets = {}
     for f in findings:
-        if f.severity == "info":
+        # Severity is a document-wide rate; convergence is per paragraph. A
+        # pattern occurring twice in the whole text, both times in one
+        # paragraph, is stronger evidence for that paragraph rather than
+        # weaker, so hits count here regardless of the document-level band.
+        # Only the inherently weak signals of REFERENCE section D are held out,
+        # since they should never be what makes a paragraph look hot.
+        if f.key in WEAK_FOR_CONVERGENCE:
             continue
         for h in f.hits:
             p = para_of(h["offset"])
