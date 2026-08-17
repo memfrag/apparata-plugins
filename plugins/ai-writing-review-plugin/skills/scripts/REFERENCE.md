@@ -232,8 +232,18 @@ fix. Point at a specific run of same-length sentences and show the break:
 
 Ordered by how much a positive result should move your verdict:
 
-**Strong** — deletion test (A1), restatement test (A2), burstiness, convergence
-of 3+ distinct patterns in one paragraph.
+**Strong** — deletion test (A1), restatement test (A2), burstiness, a rhythm
+split between pooled flat and pooled varied paragraphs, convergence of 3+
+distinct patterns in one paragraph.
+
+On the rhythm split: document burstiness is an average, so a human text with
+generated paragraphs dropped into it reports as healthy. The `rhythm_split`
+check locates paragraphs whose longest and shortest sentences differ by less
+than 35% of their mean, then pools those against the rest. A large gap between
+the two pools (say 0.24 against 0.72) is evidence of two registers in one file,
+and points you at which paragraphs to apply A1 and A2 to first. A document that
+is uniformly flat will not trigger it — plain burstiness already covers that
+case. Treat a single flat paragraph in a long document as weak on its own.
 
 **Moderate** — excess-vocabulary density across many distinct words, uncited
 authority, trailing participles, transition stacking, negative parallelism at 3+,

@@ -473,6 +473,104 @@ def check_burstiness(doc, stats):
                    note, [])
 
 
+def _burstiness(lengths):
+    if len(lengths) < 2:
+        return None
+    mean = statistics.mean(lengths)
+    if not mean:
+        return None
+    return statistics.pstdev(lengths) / mean
+
+
+# A paragraph needs this many sentences before its own rhythm means anything.
+_RHYTHM_MIN_SENTENCES = 3
+# Spread, (max - min) / mean, at or below this reads as metronomic.
+#
+# Standard deviation over the mean is the right measure for a whole document
+# but misleads on three or four samples: "17, 10, 17" scores 0.22 despite
+# alternating sharply, because a single mid-range outlier barely moves the
+# deviation. Spread asks the plainer question - how far apart are the longest
+# and shortest sentences - and does not care how many samples produced it.
+_RHYTHM_FLAT_SPREAD = 0.35
+
+
+def check_rhythm_split(doc, stats):
+    """Find metronomic regions that the document-wide average hides.
+
+    A whole-file burstiness figure is an average, so a human-written text with
+    generated paragraphs dropped into it reports as healthy. Locating the flat
+    paragraphs and pooling them against the rest recovers the contrast. Pooling
+    matters: a single paragraph rarely holds enough sentences for its own
+    standard deviation to mean anything, but the flat set together usually does.
+    """
+    per_para = stats.get("paragraph_sentence_lengths") or []
+    doc_b = _burstiness(stats["sentence_lengths"])
+    if doc_b is None or len(stats["sentence_lengths"]) < 10:
+        return None
+
+    measurable = [(idx, off, lens) for idx, off, lens in per_para
+                  if len(lens) >= _RHYTHM_MIN_SENTENCES]
+    if len(measurable) < 2:
+        return None
+
+    flat, rest = [], []
+    for idx, off, lens in measurable:
+        spread = (max(lens) - min(lens)) / statistics.mean(lens)
+        (flat if spread <= _RHYTHM_FLAT_SPREAD
+         else rest).append((idx, off, lens, spread))
+
+    if not flat:
+        return Finding("rhythm_split", "Rhythm consistency", "info",
+                       f"no metronomic paragraphs (document {doc_b:.2f})",
+                       "no paragraph below 0.35 spread",
+                       "Every paragraph long enough to measure varies its "
+                       "sentence lengths.", [])
+
+    flat_lens = [n for _, _, lens, _ in flat for n in lens]
+    rest_lens = [n for _, _, lens, _ in rest for n in lens]
+    flat_b = _burstiness(flat_lens)
+    rest_b = _burstiness(rest_lens)
+
+    hits = []
+    for idx, off, lens, spread in sorted(flat, key=lambda t: t[3]):
+        hits.append(hit(doc, off, f"spread {spread:.2f} over {len(lens)} "
+                                  f"sentences ({', '.join(map(str, lens))})",
+                        {"paragraph": idx, "spread": round(spread, 3),
+                         "sentence_lengths": lens}))
+
+    share = len(flat_lens) / max(len(flat_lens) + len(rest_lens), 1)
+
+    # The interesting case is a document that looks healthy overall while
+    # containing flat regions - that is exactly what an average conceals.
+    hidden = doc_b >= 0.6 and flat_b is not None and flat_b < 0.40
+    if hidden and share >= 0.15:
+        sev = "flag"
+    elif share >= 0.3 or hidden:
+        sev = "elevated"
+    else:
+        sev = "info"
+
+    value = (f"{len(flat)} of {len(measurable)} measurable paragraphs are "
+             f"metronomic ({share:.0%} of sentences)")
+    if rest_b is not None:
+        value += f"; flat {flat_b:.2f} vs rest {rest_b:.2f}"
+    value += f"; document {doc_b:.2f}"
+
+    note = ("Document burstiness is an average and hides local flatness. "
+            "Paragraphs whose longest and shortest sentences differ by "
+            "less than 35% of their mean are listed.")
+    if hidden:
+        note += (" The document as a whole reads as varied, so these regions "
+                 "would not show up in the headline number - compare the "
+                 "pooled figures rather than the average.")
+    if rest_b is not None and flat_b is not None and rest_b - flat_b > 0.25:
+        note += (" The gap between the two pools is large enough to suggest "
+                 "two registers in one file.")
+
+    return Finding("rhythm_split", "Rhythm consistency", sev, value,
+                   "no paragraph below 0.35 spread", note, hits)
+
+
 def check_metronome(doc, stats):
     lengths = stats["sentence_lengths"]
     if len(lengths) < 10:
@@ -932,6 +1030,7 @@ def check_markdown(doc, stats):
 CHECKS = [
     check_em_dash,
     check_burstiness,
+    check_rhythm_split,
     check_metronome,
     check_excess_vocabulary,
     check_verb_inflation,
@@ -964,11 +1063,17 @@ def build_stats(doc):
 
     sentences_abs = []
     para_counts = []
-    for _, offset, chunk in paragraphs:
+    para_lengths = []
+    for idx, offset, chunk in paragraphs:
         sents = split_sentences(chunk)
         para_counts.append(max(len(sents), 1))
+        local = []
         for s_off, s_text in sents:
             sentences_abs.append((offset + s_off, s_text))
+            n = len(words_of(strip_markdown_emphasis(s_text)))
+            if n:
+                local.append(n)
+        para_lengths.append((idx, offset, local))
 
     lengths = []
     for _, s_text in sentences_abs:
@@ -982,6 +1087,7 @@ def build_stats(doc):
         "sentence_lengths": lengths,
         "paragraphs": paragraphs,
         "paragraph_sentence_counts": para_counts,
+        "paragraph_sentence_lengths": para_lengths,
     }
 
 

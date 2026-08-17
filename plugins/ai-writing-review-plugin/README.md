@@ -20,11 +20,12 @@ A read-only review agent (`Read`, `Grep`, `Glob`, `Bash`) that runs the detector
 
 ## What it checks
 
-The detector runs 19 checks. Every hit carries a line number.
+The detector runs 20 checks. Every hit carries a line number.
 
 | Check | Measure | Flags at |
 |---|---|---|
 | **Burstiness** | stdev ÷ mean of sentence lengths | < 0.4 (human 0.6–1.2, LLM 0.2–0.4) |
+| **Rhythm consistency** | per-paragraph spread, then flat paragraphs pooled against the rest | any paragraph below 0.35 spread |
 | **Em dash density** | per 1,000 words | > 20 (human 3.7–10; GPT-4.1 measured 10.6) |
 | **Metronomic median** | median sentence length | 14–22 words *and* low variance |
 | **Excess vocabulary** | ~90 words and phrases, per 500 words | > 3 |

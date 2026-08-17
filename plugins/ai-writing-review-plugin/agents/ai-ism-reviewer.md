@@ -30,12 +30,19 @@ find ~/.claude/plugins ~/Projekt -path "*ai-writing-review-plugin/skills/scripts
 python3 <scripts-dir>/detect.py <target-file> --json
 ```
 
-It reports 19 checks: em dash density, burstiness, metronomic median, excess
-vocabulary, verb inflation, negative parallelism, autopilot tricolon, trailing
-participles, copula avoidance, throat-clearing, uncited authority, transition
-stacking, paragraph uniformity, MATTR, Unicode artifacts, conclusion reflex,
-hedge boilerplate, puffery, and markdown structure. Each hit carries a line
-number. The `clusters` array lists paragraphs where 3+ distinct patterns
+It reports 20 checks: em dash density, burstiness, rhythm consistency,
+metronomic median, excess vocabulary, verb inflation, negative parallelism,
+autopilot tricolon, trailing participles, copula avoidance, throat-clearing,
+uncited authority, transition stacking, paragraph uniformity, MATTR, Unicode
+artifacts, conclusion reflex, hedge boilerplate, puffery, and markdown
+structure. Each hit carries a line number.
+
+`rhythm_split` is worth reading closely when it fires. Document burstiness is
+an average, so a human text with generated paragraphs dropped into it reports
+as healthy overall. That check names the flat paragraphs and pools them against
+the rest, so a result like "flat 0.24 vs rest 0.72; document 0.61" tells you
+the file holds two registers and points at which paragraphs to run the deletion
+and restatement tests on first. The `clusters` array lists paragraphs where 3+ distinct patterns
 converge — this is the strongest structural evidence available and should drive
 your ranking.
 
