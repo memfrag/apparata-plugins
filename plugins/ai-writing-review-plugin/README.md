@@ -86,6 +86,21 @@ python3 skills/scripts/detect.py DRAFT.md --json   # structured, for the agent
 
 The burstiness and em dash figures are working thresholds drawn from the last of these, not measurements this plugin reproduced. Treat them as calibration starting points and adjust them to your own corpus.
 
+## Tests
+
+```bash
+cd skills/scripts
+python3 tests/run_tests.py   # 73 assertions over 4 fixtures
+python3 tests/mutate.py      # 11 deliberate breakages, all must be caught
+```
+
+`run_tests.py` covers what the detector counts. `mutate.py` re-breaks each
+shipped bug and requires the suite to notice, because a suite that never fails
+proves nothing — its first run found three behaviours with no coverage.
+
+The judgment layer is not covered. The deletion and restatement tests live in
+`REFERENCE.md` and are carried out by the agent; grading those needs an eval.
+
 ## Prerequisites
 
 Python 3, standard library only. Reviews are read-only.
