@@ -9,6 +9,13 @@ The book is organized as paired "✅ Recommended patterns" / "❌ Potentially ha
 ### swiftui-reviewer
 A read-only review agent (`Read`, `Grep`, `Glob`, `Bash`) carrying the full rubric. Claude selects it automatically when you ask for a SwiftUI review, or you can invoke it explicitly through the skill below.
 
+## Reference
+
+### references/swiftui-best-practices.md
+The reasoning behind the rubric, in prose: the mechanism under each rule, correct and incorrect forms side by side, and a quick-reference table of every anti-pattern with its fix. The agent reads it when a finding turns on a mechanism it needs to state precisely.
+
+Its **section 1 is an architectural position**, not a summary of the book: SwiftUI's view struct is not a view controller, so a view model added to every view by habit re-implements machinery the framework already provides — and produces, in order, most of the anti-patterns in the rest of the document. It gives six criteria for when an `@Observable` model genuinely earns its place. The book itself takes no position on MVVM; it uses view models where they pay for themselves. The distinction is marked in the document.
+
 ## Skills
 
 ### swiftui-review
