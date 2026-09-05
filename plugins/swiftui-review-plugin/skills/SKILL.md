@@ -37,10 +37,11 @@ Resolve the target to concrete file paths before continuing. The agent should ne
 Launch the **`swiftui-reviewer`** agent with the resolved paths. Give it, explicitly:
 
 - The exact files (or the diff command whose output defines the scope).
+- The absolute path of this plugin's `references/` directory, which holds `swiftui-best-practices.md`.
 - Whether it is reviewing **a diff** (judge only what changed, but read surrounding code for context) or **whole files**.
 - Any focus the user asked for — e.g. "just the performance rules", "accessibility only". Absent that, it applies the full rubric.
 
-Do not re-derive the review rubric here or in the prompt; it lives in the agent definition. Do not review the code yourself in parallel — wait for the agent.
+Do not re-derive the review rubric here or in the prompt; it lives in the agent definition, and the reasoning behind it lives in `references/swiftui-best-practices.md`. Do not read the reference yourself and summarize it into the prompt — let the agent read it, so the full text stays out of the main conversation. Do not review the code yourself in parallel — wait for the agent.
 
 ## Step 3 — Relay the findings
 

@@ -42,15 +42,19 @@ plugins/<name>-plugin/
         └── scripts/
 ```
 
-**Agent-backed plugin** (e.g., `swiftui-review-plugin`) — an `agents/` directory alongside `skills/`, where the skill resolves the target and dispatches the agent, and the agent holds the domain knowledge:
+**Agent-backed plugin** (e.g., `swiftui-review-plugin`, `ai-writing-review-plugin`) — an `agents/` directory alongside `skills/`, where the skill resolves the target and dispatches the agent, and the agent holds the domain knowledge. Long-form material the agent consults on demand goes in `references/`:
 ```
 plugins/<name>-plugin/
 ├── README.md
 ├── agents/
 │   └── <agent>.md
+├── references/
+│   └── <topic>.md
 └── skills/
     └── SKILL.md
 ```
+
+Reference files are **not** loaded into the agent's prompt. The skill passes the absolute path of the directory when it dispatches, the agent falls back to a `find` if it wasn't supplied, and the agent reads the file only when a finding needs it — which keeps long documents out of the main conversation.
 
 ### Agent definitions
 

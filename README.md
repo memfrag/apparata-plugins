@@ -155,6 +155,8 @@ Review SwiftUI code for adherence to the patterns and anti-patterns in *The Swif
 
 **Skill:** `/swiftui-review [path]` — Resolve the review target (a path, the current git diff, or SwiftUI files under the working directory), dispatch the agent, and relay findings ordered by severity with `file:line` references and specific fixes
 
+**Reference:** `references/swiftui-best-practices.md` — The reasoning behind the rubric, plus an architectural section on why a view model per view is the wrong default and the six criteria for when an `@Observable` model earns its place
+
 **Prerequisites:** None
 
 ---
