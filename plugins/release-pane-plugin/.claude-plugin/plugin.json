@@ -1,0 +1,16 @@
+{
+  "name": "release-pane-plugin",
+  "version": "0.1.0",
+  "description": "Shows the stages of a release build script in a pane beside the chat, live, from build/release-status.json",
+  "author": { "name": "Martin Johannesson" },
+  "license": "MIT",
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "statusPath": {
+      "type": "string",
+      "title": "Status file",
+      "description": "Path of the status file the release script writes, relative to the project folder",
+      "default": "build/release-status.json"
+    }
+  }
+}

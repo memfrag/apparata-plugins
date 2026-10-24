@@ -11,6 +11,7 @@ Generates a `build-and-notarize.sh` script and all supporting files for a macOS 
 
 - `scripts/build-and-notarize.sh` — Full release pipeline script
 - `scripts/ExportOptions.plist` — Developer ID signing configuration
+- `scripts/release-status.sh` — Writes `build/release-status.json` at each stage, which the release-pane plugin shows live beside the chat
 - Sparkle integration code (Info.plist, entitlements, updater UI)
 - Manual Xcode setup instructions for SPM and EdDSA keys
 
@@ -21,6 +22,7 @@ Generates a `build-and-notarize.sh` script and all supporting files for a macOS 
 - DMG distribution (not ZIP) to preserve framework symlinks
 - Appcast generation for Sparkle auto-updates
 - Sandbox detection with appropriate entitlements
+- Live stage status for the release-pane plugin
 
 ## Prerequisites
 

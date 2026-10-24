@@ -79,6 +79,54 @@ The script should follow this flow:
   ```
 - Add `Sparkle-tools/` to the project root `.gitignore`
 
+### 4a-2. Release status file
+The script writes `build/release-status.json` at every stage boundary, so the release-pane plugin can show the run live beside the chat. The code ships with this skill: copy `<skill-dir>/scripts/release-status.sh` into the project as `scripts/release-status.sh` (unchanged), and source it from the build script after the constants, paths and stage list are set, before anything else runs:
+
+```bash
+DRY_RUN=false
+if [ "${1:-}" = "--dry-run" ]; then
+    DRY_RUN=true
+fi
+
+# ... constants and paths ...
+
+STAGE_IDS=(clean sparkle-tools version archive export dmg verify notarize staple sparkle-sign tag release appcast)
+STAGE_TITLES=(
+    "Clean build directory"
+    "Sparkle tools"
+    "Version check"
+    "Archive"
+    "Export"
+    "DMG"
+    "Verify codesign"
+    "Notarize"
+    "Staple"
+    "Sign for Sparkle"
+    "Tag + push tag"
+    "GitHub release"
+    "Appcast"
+)
+DRY_RUN_SKIPPED_STAGES=(notarize staple sparkle-sign tag release appcast)
+source "$SCRIPT_DIR/release-status.sh"
+
+error() {
+    RUN_ERROR="$1"
+    echo "ERROR: $1" >&2
+    exit 1
+}
+```
+
+Then:
+- Call `stage <id>` right before each stage's `==>` line, for every id in `STAGE_IDS`, in order. Leave out ids for steps the script does not have (no version checking, no dry run), and keep `STAGE_IDS`, `STAGE_TITLES` and the `stage` calls in step.
+- Call `write_status` once more right after `mkdir -p "$BUILD_DIR"` in the clean stage, because cleaning deletes the file.
+- Use `stage_note "<text>"` for a short note on the running stage: the version, "already installed" for Sparkle tools, the exported app version, the signing team.
+- Around every `read -rp` prompt, set `RUN_WAITING="Enter the version in the terminal"` (or the release title) and call `write_status`, then set `RUN_WAITING=""` once the answer is in.
+- Name the archive and export logs after their stage ids (`$BUILD_DIR/archive.log`, `$BUILD_DIR/export.log`). The status file points to a stage's log when `$BUILD_DIR/<id>.log` exists.
+- Do not set an EXIT trap in the build script: `release-status.sh` installs one that marks the running stage failed when the script exits early, or done when it exits 0.
+- Supporting a `--dry-run` flag (archive, export, DMG and verify only) is recommended. Without one, keep `DRY_RUN=false` and leave `DRY_RUN_SKIPPED_STAGES` empty.
+
+`build/` is already gitignored, so the status file is never committed.
+
 ### 4b. Version checking (if enabled)
 - Read current version: try `xcodebuild -showBuildSettings | grep MARKETING_VERSION` first. If not found (some projects don't use `MARKETING_VERSION`), fall back to reading `CFBundleShortVersionString` from Info.plist via `PlistBuddy`. The grep pipeline must not fail silently under `set -euo pipefail` — use `|| true` to handle the empty-result case.
 - Check against latest GitHub release with `gh release view --repo <owner/repo> --json tagName -q '.tagName'`
@@ -179,6 +227,10 @@ git push origin HEAD
 ## Step 5: Make the script executable
 
 `chmod +x scripts/build-and-notarize.sh`
+
+Then check the script with `bash -n scripts/build-and-notarize.sh`. If it has a `--dry-run` flag, offer to run it once: afterwards `build/release-status.json` should show every stage up to verify as `done`.
+
+Tell the user that the release-pane plugin (`/plugin install release-pane-plugin --marketplace memfrag/apparata-plugins`) shows the stages live in a pane while the script runs.
 
 ## Step 6: Create Sparkle integration code
 
@@ -301,6 +353,7 @@ After generating all files, instruct the user to:
 - **No extra xcodebuild overrides**: Do not pass `SKIP_INSTALL`, `BUILD_LIBRARY_FOR_DISTRIBUTION`, `CODE_SIGN_IDENTITY`, or `-allowProvisioningUpdates` to xcodebuild. These can break SPM dependency signing or cause export failures. Keep archive/export commands minimal — signing should be configured in the Xcode project.
 - **Sparkle tools outside build/**: `SPARKLE_TOOLS_DIR` must be in the project root (`$PROJECT_DIR/Sparkle-tools`), not inside `build/`, since `build/` is cleaned on each run.
 - **No Run Script build phase needed**: SPM handles Sparkle framework embedding. Do not strip or copy XPC services manually.
+- **Status file stays in step**: Every `==>` stage has a `stage <id>` call, and `error()` sets `RUN_ERROR` before it exits. `scripts/release-status.sh` owns the EXIT trap.
 - **Sparkle MIT license**: Remind the user to add Sparkle (MIT, 2006-2017, Andy Matuschak et al.) to their app's attributions/LICENSE file.
 
 ## Notes

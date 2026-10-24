@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Apparata Claude plugins",
-    "version": "2.7.1"
+    "version": "2.8.0"
   },
   "plugins": [
     {
@@ -47,6 +47,11 @@
       "name": "refine-specification-plugin",
       "source": "./plugins/refine-specification-plugin",
       "description": "Refine a specification markdown file through an in-depth interview process"
+    },
+    {
+      "name": "release-pane-plugin",
+      "source": "./plugins/release-pane-plugin",
+      "description": "Show the stages of a release build script in a live pane beside the chat (status, elapsed time, failures with their log) from build/release-status.json"
     },
     {
       "name": "session-handoff-plugin",
