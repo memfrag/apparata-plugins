@@ -141,15 +141,26 @@ export const register: Register = (on, options) => {
         <Box flexDirection="column">
           {run.stages.map((stage, index) => (
             <Box key={stage.id} flexDirection="row" gap={1}>
-              <Text color={COLOR[stage.state]} dimColor={stage.state === 'pending' || stage.state === 'skipped'}>
-                {MARK[stage.state]} {String(index + 1).padStart(2, ' ')}. {stage.title}
-              </Text>
-              {stage.startedAt !== null && (
-                <Text dimColor tabular>
-                  {stageElapsed(stage, at)}
+              <Box flexShrink={0}>
+                <Text color={COLOR[stage.state]} dimColor={stage.state === 'pending' || stage.state === 'skipped'}>
+                  {MARK[stage.state]} {String(index + 1).padStart(2, ' ')}. {stage.title}
                 </Text>
+              </Box>
+              {stage.startedAt !== null && (
+                <Box flexShrink={0}>
+                  <Text dimColor tabular>
+                    {stageElapsed(stage, at)}
+                  </Text>
+                </Box>
               )}
-              {stage.note !== '' && <Text dimColor>{stage.note}</Text>}
+              {stage.note !== '' && (
+                // The note gives way first: cut at the pane's edge, wherever that is.
+                <Box flexShrink={1} minWidth={0}>
+                  <Text dimColor wrap="truncate-end">
+                    {stage.note}
+                  </Text>
+                </Box>
+              )}
             </Box>
           ))}
         </Box>

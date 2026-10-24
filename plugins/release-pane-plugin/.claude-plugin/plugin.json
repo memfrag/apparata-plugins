@@ -1,6 +1,6 @@
 {
   "name": "release-pane-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shows the stages of a release build script in a pane beside the chat, live, from build/release-status.json",
   "author": { "name": "Martin Johannesson" },
   "license": "MIT",

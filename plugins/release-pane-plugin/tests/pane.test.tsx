@@ -35,7 +35,12 @@ const FAILED: ReleaseStatus = {
   waiting: '',
   error: 'Archive failed. See /p/build/archive.log for details.',
   stages: [
-    stage('clean', 'Clean build directory', { state: 'done', startedAt: 1000, endedAt: 1001 }),
+    stage('clean', 'Clean build directory', {
+      state: 'done',
+      startedAt: 1000,
+      endedAt: 1001,
+      note: 'a note long enough that a narrow pane cuts it short',
+    }),
     stage('archive', 'Archive', { state: 'failed', startedAt: 1001, endedAt: 1400, log: '/p/build/archive.log' }),
     stage('notarize', 'Notarize', { state: 'skipped', note: 'dry run' }),
   ],
@@ -73,6 +78,10 @@ test('a failed run names the stage and its log, on every surface', async ($, on)
     expect((await ui.find({ type: 'Text', text: /6m 39s/ }))?.text).toBe('6m 39s')
     expect((await ui.find({ type: 'Text', text: /^Rigly/ }))?.text).toBe('Rigly 1.0.0 · dry run')
     expect(await ui.find({ type: 'Text', text: /Notarize/ })).toBeDefined()
+    // The surface cuts the note at the pane's edge; the mod passes it whole.
+    const note = await ui.find({ type: 'Text', text: /long enough/ })
+    expect(note?.text).toBe('a note long enough that a narrow pane cuts it short')
+    expect(note?.props.wrap).toBe('truncate-end')
     await ui.unmount()
   }
 })
