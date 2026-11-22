@@ -55,6 +55,7 @@ Beyond the detector, the agent applies the judgment layer, and these findings ou
 - **The "Challenges and Future Prospects" reflex:** abstract difficulties resolving into vague optimism.
 - **Elegant variation:** synonym-swapping one term across four sentences.
 - **Symmetry of coverage:** every subtopic given equal space regardless of how much there was to say.
+- **Dramatic register:** ordinary technical events told with suspense, punchlines and dramatic verbs, as if the stakes were high.
 
 ## Calibration
 

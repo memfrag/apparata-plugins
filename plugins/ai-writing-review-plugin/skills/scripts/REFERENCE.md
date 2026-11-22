@@ -140,6 +140,46 @@ A passage frequently shows both.
 text feels substantive because each sentence introduces a new noun, and the
 reader mistakes new vocabulary for new information.
 
+### A10. Dramatic register
+
+Ordinary events told as if the stakes were high. It shows up in technical and
+workplace writing (postmortems, retrospectives, engineering blogs, internal
+docs) where nothing in the events calls for it:
+
+> **The template nobody built** · What survived · The hidden cost ·
+> As a fact, it stopped no one. · That is where memory failed. ·
+> the build collapsed · the commits vanished · we paid the price · a trap
+
+Four forms recur:
+
+- **Suspense in headings and ledes**: a heading that teases instead of naming
+  its subject. "The template that wasn't built on Android" says what the
+  section is about; "The template nobody built" makes the reader wait.
+- **Punchline endings**: a paragraph that closes on a short, verdict-shaped
+  sentence written to land rather than to inform.
+- **Dramatic verbs and images**: "collapsed", "vanished", "paid for it",
+  "a trap" for a failed build, a lost commit or a wrong setting.
+- **Verdicts on whole practices**: "That is where memory failed", "the lesson
+  is clear", where one incident is turned into a judgment on everything.
+
+**The tell** is the gap between the stakes of the events and the register used
+for them. A flaky test or a mis-set flag told in the voice of a thriller reads
+as self-important, and readers notice it before they can say why.
+
+**The test:** imagine saying the sentence to a colleague over coffee. If the
+facts survive the retelling and only the drama falls away, flag it and show the
+plain version.
+
+**Distinguish it from A3.** Significance inflation asserts that something
+*mattered* ("played a key role"). Dramatic register stages *how it happened*
+(suspense, reversals, punchlines), and can do it without a single inflated
+claim. Both often appear together.
+
+**Calibrate.** Don't flag quoted speech, subjects with real stakes (an outage
+that lost customer data, a safety incident), or fiction, essays and speeches
+where the register is a choice (see B3). One vivid verb in a long document is
+not a finding; a pattern across headings and paragraph endings is.
+
 ---
 
 ## B. Calibration — what NOT to flag
@@ -250,6 +290,7 @@ authorship.
 | Puffery | "a world-class, state-of-the-art facility" | "a 40,000 m² plant built in 2023" |
 | Significance inflation | "This played a key role in the industry's evolution." | "Three competitors copied the format within a year." |
 | Abstraction shuffling | "It is a cornerstone, an investment, a culture — a mindset rather than a process." | *(pick the one true claim and cut the rest)* |
+| Dramatic register | "## The template nobody built … As a fact, it stopped no one." | "## The template that wasn't built on Android … The rule was there, and the agent didn't follow it." |
 | Low burstiness | Six consecutive 18-word sentences. | Break one to four words. Let another run long, with subordinate clauses that earn their length. |
 | Title Case heading | "## Getting Started With Installation" | "## Installation" |
 | Bold overuse | "The **fast**, **flexible**, **modern** library." | "The library is fast and flexible." |
@@ -283,7 +324,8 @@ case. Treat a single flat paragraph in a long document as weak on its own.
 
 **Moderate** — excess-vocabulary density across many distinct words, uncited
 authority, trailing participles, transition stacking, negative parallelism at 3+,
-paragraph uniformity.
+paragraph uniformity, dramatic register (A10); treat dramatic register as strong
+when it recurs across several headings or paragraph endings.
 
 **Weak** — em dash density, curly quotes and Unicode artifacts, TTR, any single
 lexical hit, markdown formatting on its own.

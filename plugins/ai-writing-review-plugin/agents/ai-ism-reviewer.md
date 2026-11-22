@@ -71,6 +71,11 @@ Read `<scripts-dir>/REFERENCE.md` in full, then apply section A to the text:
   practice"). List the predicates and ask what claim changes between them. If
   none does, it is one assertion repeated, and it is usually the mechanism
   behind a paragraph that fails the restatement test.
+- **Dramatic register (A10)**: suspense in headings, punchline paragraph
+  endings, dramatic verbs ("collapsed", "vanished", "paid the price") and
+  verdicts on whole practices, applied to ordinary technical events. Retell the
+  sentence as you would to a colleague over coffee; if only the drama is lost,
+  flag it and give the plain version. Skip quotes and subjects with real stakes.
 - **Ungrounded specificity runs both ways (A8).** Invented precision is the
   common case, but vague quantities inside an otherwise precise text are the
   stronger signal — a register discontinuity within one document beats any
