@@ -114,6 +114,8 @@ Refine a specification markdown file through an in-depth interview process that 
 
 **Skill:** `/refine-spec <path-to-spec.md>` — Read a spec, conduct a detailed interview, then write the refined spec back to the same file
 
+Type `pause` during the interview to stop partway. Progress is saved after every answer in `<spec>.refine-session.md` next to the spec, and re-running `/refine-spec` on the same spec resumes where you left off. The session file is deleted once the refined spec is written.
+
 **Prerequisites:** None
 
 ---

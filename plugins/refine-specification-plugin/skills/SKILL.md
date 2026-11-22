@@ -4,7 +4,7 @@ description: >
   Refine a specification markdown file through an in-depth interview process.
   Use when the user wants to improve, flesh out, or stress-test a spec.
 user-invocable: true
-allowed-tools: Read, Write, AskUserQuestion
+allowed-tools: Read, Write, AskUserQuestion, Bash(rm:*)
 argument-hint: <path-to-spec.md>
 ---
 
@@ -17,6 +17,16 @@ You are a senior systems architect and product thinker whose job is to find ever
 The user provides a path to a markdown specification file via `$ARGUMENTS`. Read the file in full.
 
 If no path is provided, ask the user for the path using AskUserQuestion.
+
+### Resuming a paused session
+
+Interview progress is kept in a session file next to the spec: the spec's path with `.md` replaced by `.refine-session.md` (e.g. `docs/api.md` → `docs/api.refine-session.md`). After reading the spec, try to read the session file.
+
+If it exists, ask the user with AskUserQuestion whether to:
+
+- **Resume** — read the session file and continue the interview from where it stopped. Do not re-ask anything under "Answered". Start with the items under "Remaining threads", then look for further gaps. If the spec has changed in ways that affect earlier answers, mention it and follow up where needed.
+- **Start over** — ignore the session file and begin a fresh interview. The file is overwritten after the first answer.
+- **Discard and stop** — delete the session file and stop without interviewing.
 
 ## Process
 
@@ -40,6 +50,8 @@ Internally, identify:
 ### 2. Interview
 
 Conduct a deep, iterative interview using AskUserQuestion. This is the core of the skill.
+
+Before the first question (new or resumed session), tell the user in one line that they can type `pause` in the Other field at any time to stop, and that re-running `/refine-spec` on the same spec resumes the interview.
 
 Rules for the interview:
 
@@ -65,11 +77,37 @@ Cover these dimensions as relevant (not as a checklist — only where the spec h
 
 Continue the interview until you have addressed all significant gaps. This may take many rounds. Do not rush — thoroughness is the point.
 
+#### Session log
+
+After every answer, write the session file with the Write tool so the interview can be resumed even if it ends abruptly. Do not create it before the first answer. Use this format:
+
+```markdown
+# Refine session: <spec filename>
+
+Started: <date> · Last updated: <date> · Status: in-progress
+
+## Answered
+
+### Q1: <question as asked>
+
+**Answer:** <the user's answer, plus any clarification from follow-ups>
+
+## Remaining threads
+
+- <gaps you have identified but not yet asked about, and follow-ups the latest answers opened>
+```
+
+Keep "Remaining threads" current: remove items once covered and add new ones as answers reveal them. It is what a resumed session works from.
+
+#### Pausing
+
+If the user answers `pause` (any case), or otherwise asks to pause or stop the interview, set the status to `paused`, write the session file, and stop. Tell the user the session file path and that `/refine-spec <spec path>` resumes it. Do not rewrite the spec.
+
 When you believe the interview is complete, ask the user: "I think we've covered the major gaps. Are there any other areas you'd like to explore, or should I write the updated spec?"
 
 ### 3. Write the Updated Specification
 
-Once the user confirms, rewrite the specification file at the same path.
+Once the user confirms, rewrite the specification file at the same path. Work from the full session file, not only from what is in the conversation — a resumed session will not have the earlier answers in context.
 
 Rules for the rewrite:
 
@@ -82,8 +120,8 @@ Rules for the rewrite:
 - Do not add boilerplate, filler, or generic best-practice text that wasn't discussed.
 - Do not remove content from the original spec unless it was explicitly contradicted during the interview.
 
-Write the updated spec back to the original file path using the Write tool.
+Write the updated spec back to the original file path using the Write tool. Once the write succeeds, delete the session file with `rm`.
 
 ### 4. Finish
 
-After writing, briefly list what changed (added sections, resolved ambiguities, documented decisions) so the user can review the diff.
+After writing, briefly list what changed (added sections, resolved ambiguities, documented decisions) so the user can review the diff, and mention that the session file was removed.
